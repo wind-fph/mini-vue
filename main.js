@@ -1,11 +1,10 @@
 /*
- * @Description: file information
+ * @Description: 主入口
  * @Author: Perry
  * @Date: 2021-10-26 20:16:30
  * @LastEditors: Perry
- * @LastEditTime: 2021-10-27 13:48:07
+ * @LastEditTime: 2021-10-28 13:38:05
  */
-// App.render(App.setup())
 import { createApp } from './core/index.js'
-import {App} from './App.js'
+import { App } from './App.js'
 createApp(App).mount('#app')
