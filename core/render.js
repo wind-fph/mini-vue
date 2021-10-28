@@ -3,21 +3,29 @@
  * @Author: Perry
  * @Date: 2021-10-27 19:02:05
  * @LastEditors: Perry
- * @LastEditTime: 2021-10-28 11:05:27
+ * @LastEditTime: 2021-10-28 16:24:58
  */
 //将虚拟元素转换成正式element
-export function mountedElement(vnode, container) {
 
+function isValue(value) {
+  return typeof value === 'string' || typeof value === 'number'
+}
+
+export function mountedElement(vnode, container) {
 
   const { type, props, children } = vnode
   const el = vnode.el = document.createElement(type)
 
   //属性值
   for (const key in props) {
+    if (key === 'event') {
+      props[key].forEach(event => {
+        el.addEventListener(event,props[key][event])
+      });
+    }
     el.setAttribute(key, props[key])
   }
-
-  if (typeof children === 'string') {
+  if (isValue(children)) {
     //string
     el.textContent = children
   } else if (Array.isArray(children)) {
@@ -64,7 +72,7 @@ export function diff(oldVnode, newVnode) {
     const { children: newChildren } = newVnode
     const { children: oldChildren } = oldVnode
 
-    if (typeof newChildren === 'string') {
+    if (isValue(newChildren)) {
       //新数据为string时，只要不相等就替换更新
       // if (typeof oldChildren === 'string') {
       if (newChildren !== oldChildren) {
@@ -76,7 +84,7 @@ export function diff(oldVnode, newVnode) {
       // }
     } else if (Array.isArray(newChildren)) {
       //新数据为array时，老数据为string时，渲染新数据
-      if (typeof oldChildren === 'string') {
+      if (isValue(oldChildren)) {
         console.log('新节点为array，老节点为string，mountedElement渲染新节点')
         el.textContent = ''
         newChildren.forEach(v => {

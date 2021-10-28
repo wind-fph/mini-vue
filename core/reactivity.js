@@ -3,7 +3,7 @@
  * @Author: Perry
  * @Date: 2021-10-28 14:23:54
  * @LastEditors: Perry
- * @LastEditTime: 2021-10-28 15:36:45
+ * @LastEditTime: 2021-10-28 16:28:30
  */
 
 const effectArray=[]
@@ -22,17 +22,20 @@ function isRef(r) {
 }
 
 const handler = {
-  get(value) {
-    return value
+  get(value,key) {
+    return value[key]
   },
   set(target, key, value, receiver) {
+    //对象触发setting
     Reflect.set(target, key, value, receiver);
+    triggerEffect()
+    return true
   },
 };
 
 function toReactive(target) {
-  if(typeof target !== 'objetc') return target
-  new Proxy(target,handler)
+  if (typeof target !== 'object') return target
+  return new Proxy(target,handler)
 }
 
 class RefImpl{
@@ -46,11 +49,15 @@ class RefImpl{
     return  this._value
   }
   set value(value) {
-    this._value=value
-    effectArray.forEach(e => {
-      e.run()
-    });
+    this._value = value
+    triggerEffect()
   }
+}
+
+function triggerEffect() {
+  effectArray.forEach(e => {
+    e.run()
+  });
 }
 
 function effect(fn) {
